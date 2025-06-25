@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Campaign-Master"
+rootProject.name = "campaign-master"
 include(":app")
  
