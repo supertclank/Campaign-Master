@@ -18,11 +18,11 @@ fun SessionPlannerScreen() {
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 32.dp)
-    ){
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Text(
                 text = "Session Planner",
                 fontSize = 24.sp

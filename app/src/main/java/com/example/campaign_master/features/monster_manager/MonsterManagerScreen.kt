@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MonsterManagerScreen () {
+fun MonsterManagerScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -32,5 +32,3 @@ fun MonsterManagerScreen () {
         }
     }
 }
-
-

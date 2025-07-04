@@ -40,7 +40,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun CampaignMasterTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 

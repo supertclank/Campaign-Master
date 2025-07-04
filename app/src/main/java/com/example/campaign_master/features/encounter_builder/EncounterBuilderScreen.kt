@@ -13,11 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EncounterBuilderScreen (){
+fun EncounterBuilderScreen() {
     Box(
-    modifier = Modifier
-    .fillMaxSize()
-    .padding(top = 32.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 32.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),

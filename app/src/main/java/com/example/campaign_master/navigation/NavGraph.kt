@@ -5,12 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.campaign_master.features.encounter_builder.EncounterBuilderScreen
+import com.example.campaign_master.features.home.HomeScreen
 import com.example.campaign_master.features.loot_manager.LootManagerScreen
 import com.example.campaign_master.features.monster_manager.MonsterManagerScreen
 import com.example.campaign_master.features.notes.NotesJournalScreen
 import com.example.campaign_master.features.session_planner.SessionPlannerScreen
 import com.example.campaign_master.features.settings.SettingsScreen
-import com.example.campaign_master.features.home.HomeScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {

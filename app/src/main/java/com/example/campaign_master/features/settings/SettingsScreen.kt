@@ -13,12 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SettingsScreen () {
+fun SettingsScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 32.dp)
-        ){
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
