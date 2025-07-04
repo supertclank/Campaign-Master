@@ -3,7 +3,8 @@
 package com.example.campaign_master.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -17,7 +18,9 @@ private val DarkColorScheme = darkColorScheme(
     background = Color(0xFF121212),
     surface = Color(0xFF1F1B16),
     onSurface = Color(0xFFE1DED9),
-    error = Color(0xFFCF6679)
+    error = Color(0xFFCF6679),
+    primaryContainer = Color(0xFFC2A878),
+    onPrimaryContainer = Color(0xFF1B1B1B)
 )
 
 //light theme
@@ -29,7 +32,9 @@ private val LightColorScheme = lightColorScheme(
     background = Color(0xFFFAF5E9),
     surface = Color.White,
     onSurface = Color(0xFF1B1B1B),
-    error = Color(0xFFB00020)
+    error = Color(0xFFB00020),
+    primaryContainer = Color(0xFF8F5D3F),
+    onPrimaryContainer = Color.White
 )
 
 @Composable
@@ -41,6 +46,7 @@ fun CampaignMasterTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = AppTypography,
         content = content
     )
 }

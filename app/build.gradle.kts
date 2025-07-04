@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.material3.v111)
+    implementation(libs.androidx.navigation.compose)
 
 
     // firebase dependencies
