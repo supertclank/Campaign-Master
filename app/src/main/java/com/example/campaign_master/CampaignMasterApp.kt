@@ -32,18 +32,6 @@ fun CampaignMasterApp() {
     var showSheet by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Campaign Master")
-                    }
-                }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(onClick = { showSheet = true }) {
                 Icon(Icons.Default.Menu, contentDescription = "Menu")
