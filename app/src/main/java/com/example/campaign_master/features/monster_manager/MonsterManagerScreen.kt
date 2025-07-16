@@ -1,7 +1,9 @@
 package com.example.campaign_master.features.monster_manager
 
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,16 +30,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.campaign_master.data.MonsterRepository
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 private const val TAG = "MonsterManagerScreen"
 
 @Composable
-fun MonsterManagerScreen(viewModel: MonsterManagerViewModel = viewModel()) {
+fun MonsterManagerScreen(
+    navController: NavHostController,
+    viewModel: MonsterManagerViewModel = viewModel(),
+) {
     val monsters by viewModel.monsters
     val isLoading by viewModel.isLoading
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        if (!viewModel.hasLoadedInitialMonsters) {
+            Log.d(TAG, "Initial load triggered")
+            viewModel.searchMonsters("")
+            viewModel.hasLoadedInitialMonsters = true
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -59,6 +76,11 @@ fun MonsterManagerScreen(viewModel: MonsterManagerViewModel = viewModel()) {
             onSelect = { viewModel.selectedType.value = it }
         )
 
+        LegendaryFilter(
+            selected = viewModel.selectedLegendary.value,
+            onSelect = { viewModel.selectedLegendary.value = it }
+        )
+
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
@@ -74,6 +96,7 @@ fun MonsterManagerScreen(viewModel: MonsterManagerViewModel = viewModel()) {
                 Log.d(TAG, "Query: $searchQuery")
                 Log.d(TAG, "Selected CR: ${viewModel.selectedCR.value}")
                 Log.d(TAG, "Selected Type: ${viewModel.selectedType.value}")
+                Log.d(TAG, "Selected Legendary: ${viewModel.selectedLegendary.value}")
                 viewModel.searchMonsters(searchQuery)
             },
             modifier = Modifier
@@ -121,12 +144,17 @@ fun MonsterManagerScreen(viewModel: MonsterManagerViewModel = viewModel()) {
                         modifier = Modifier
                             .padding(vertical = 4.dp)
                             .fillMaxWidth()
+                            .clickable {
+                                val monsterJson = Uri.encode(Json.encodeToString(monster))
+                                navController.navigate("monster_detail/$monsterJson")
+                            }
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(monster.name, style = MaterialTheme.typography.titleMedium)
                             Text("CR: ${monster.challenge_rating}")
                             Text("Type: ${monster.type}")
                             Text("HP: ${monster.hit_points}, AC: ${monster.armor_class}")
+                            Text("Legendary: ${monster.legendary}")
 
                             Spacer(modifier = Modifier.height(8.dp))
 

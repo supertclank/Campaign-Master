@@ -13,7 +13,14 @@ object MonsterRepository {
             "challenge_rating" to monster.challenge_rating,
             "armor_class" to monster.armor_class,
             "hit_points" to monster.hit_points,
-            "timestamp" to System.currentTimeMillis()
+            "speed" to monster.speed,
+            "size" to monster.size,
+            "alignment" to monster.alignment,
+            "type" to monster.type,
+            "legendary_actions" to monster.legendary_actions,
+            "actions" to monster.actions,
+            "timestamp" to System.currentTimeMillis(),
+            "Legendary" to monster.legendary
         )
 
         monstersCollection.add(data)

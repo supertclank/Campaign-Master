@@ -1,6 +1,5 @@
 package com.example.campaign_master.navigation
 
-import android.R.attr.type
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,6 +10,7 @@ import com.example.campaign_master.data.remote.models.Monster
 import com.example.campaign_master.features.encounter_builder.EncounterBuilderScreen
 import com.example.campaign_master.features.home.HomeScreen
 import com.example.campaign_master.features.loot_manager.LootManagerScreen
+import com.example.campaign_master.features.monster_manager.MonsterDetailScreen
 import com.example.campaign_master.features.monster_manager.MonsterManagerScreen
 import com.example.campaign_master.features.notes.NotesJournalScreen
 import com.example.campaign_master.features.session_planner.SessionPlannerScreen
@@ -33,7 +33,7 @@ fun NavGraph(navController: NavHostController) {
             EncounterBuilderScreen()
         }
         composable(Screen.MonsterManager.route) {
-            MonsterManagerScreen()
+            MonsterManagerScreen(navController = navController) // If you want navigation from list
         }
         composable(Screen.NotesJournal.route) {
             NotesJournalScreen()
@@ -46,13 +46,20 @@ fun NavGraph(navController: NavHostController) {
         }
         composable(
             route = "monster_detail/{monsterJson}",
-            arguments = listOf(navArgument("monsterJson") {
-                type = NavType.StringType
-            })
+            arguments = listOf(navArgument("monsterJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("monsterJson")
-            val monster = Json.decodeFromString<Monster>(json ?: "")
-            MonsterDetailScreen(monster)
+            val monsterJson = backStackEntry.arguments?.getString("monsterJson")
+            val monster = monsterJson?.let {
+                try {
+                    Json.decodeFromString<Monster>(it)
+                } catch (e: Exception) {
+                    null
+                }
+            }
+
+            monster?.let {
+                MonsterDetailScreen(monster = it, navController = navController)
+            }
         }
     }
 }

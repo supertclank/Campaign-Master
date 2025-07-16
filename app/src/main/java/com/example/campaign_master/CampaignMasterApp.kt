@@ -23,6 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.campaign_master.navigation.NavBottomSheet
 import com.example.campaign_master.navigation.NavGraph
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +33,8 @@ fun CampaignMasterApp() {
     val navController = rememberNavController()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSheet by remember { mutableStateOf(false) }
+
+    NavGraph(navController = navController)
 
     Scaffold(
         floatingActionButton = {

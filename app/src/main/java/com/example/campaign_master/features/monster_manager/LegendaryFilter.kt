@@ -15,47 +15,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TypeFilterDropdown(
-    selected: String?,
-    onSelect: (String?) -> Unit,
+fun LegendaryFilter(
+    selected: Boolean?,
+    onSelect: (Boolean?) -> Unit,
 ) {
-    // State for dropdown
     var expanded by remember { mutableStateOf(false) }
+
     val options = listOf(
-        null,
-        "aberration",
-        "beast",
-        "celestial",
-        "construct",
-        "dragon",
-        "elemental",
-        "fey",
-        "fiend",
-        "giant",
-        "humanoid",
-        "monstrosity",
-        "ooze",
-        "plant",
-        "undead"
+        null to "Any",
+        true to "Legendary",
+        false to "Not Legendary"
     )
 
-    // Dropdown content
     Column(modifier = Modifier.padding(top = 8.dp)) {
-        Text("Filter by Type")
+        Text("Filter by Legendary")
         Button(onClick = { expanded = true }) {
-            Text(selected ?: "Any")
+            Text(options.firstOrNull { it.first == selected }?.second ?: "Any")
         }
+
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { type ->
+            options.forEach { (value, label) ->
                 DropdownMenuItem(
-                    text = { Text(type ?: "Any") },
+                    text = { Text(label) },
                     onClick = {
-                        onSelect(type)
+                        onSelect(value)
                         expanded = false
                     }
                 )
             }
         }
     }
-
 }
