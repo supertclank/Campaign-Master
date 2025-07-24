@@ -20,7 +20,6 @@ object MonsterRepository {
             "legendary_actions" to monster.legendary_actions,
             "actions" to monster.actions,
             "timestamp" to System.currentTimeMillis(),
-            "Legendary" to monster.legendary
         )
 
         monstersCollection.add(data)

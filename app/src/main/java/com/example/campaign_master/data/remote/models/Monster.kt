@@ -3,7 +3,6 @@ package com.example.campaign_master.data.remote.models
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
 @Parcelize
@@ -17,6 +16,5 @@ data class Monster(
     val size: String,
     val alignment: String,
     val legendary_actions: List<MonsterAction>? = emptyList(),
-    val actions: List<MonsterAction> = emptyList(),
-    val legendary: Boolean = false
+    val actions: List<MonsterAction>? = emptyList(),
 ) : Parcelable

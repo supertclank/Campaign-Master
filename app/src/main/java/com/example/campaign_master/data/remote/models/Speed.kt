@@ -12,5 +12,5 @@ data class Speed(
     val fly: Int? = null,
     val burrow: Int? = null,
     val climb: Int? = null,
-    val hover: Boolean? = null
+    val hover: Boolean? = null,
 ) : Parcelable

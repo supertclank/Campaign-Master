@@ -58,7 +58,7 @@ fun MonsterDetailScreen(monster: Monster, navController: NavHostController) {
         Spacer(Modifier.height(18.dp))
         Text("Actions", style = MaterialTheme.typography.titleMedium)
 
-        monster.actions.forEach { action ->
+        monster.actions?.forEach { action ->
             Spacer(Modifier.height(14.dp))
             Text("• ${action.name}", fontWeight = FontWeight.Bold)
             Text(action.desc)

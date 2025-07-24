@@ -5,5 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Open5eResponse(
     val count: Int,
-    val results: List<Monster>
+    val next: String?,
+    val previous: String?,
+    val results: List<Monster>,
 )

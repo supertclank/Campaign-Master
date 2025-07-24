@@ -36,45 +36,60 @@ class MonsterManagerViewModel : ViewModel() {
     // Flag to check if the initial monsters have been loaded
     var hasLoadedInitialMonsters by mutableStateOf(false)
 
+    private suspend fun fetchAllMonsters(query: String): List<Monster> {
+        val allMonsters = mutableListOf<Monster>()
+        var nextUrl: String? = null
+        var currentPage = Open5eApi.service.getMonsters(query)
+
+        allMonsters += currentPage.results
+        nextUrl = currentPage.next
+
+        while (nextUrl != null) {
+            // Remove base URL to extract just the path/query
+            val relativePath = nextUrl.removePrefix("https://api.open5e.com/")
+            currentPage = Open5eApi.service.getMonstersByUrl(relativePath)
+            allMonsters += currentPage.results
+            nextUrl = currentPage.next
+        }
+
+        return allMonsters
+    }
+
+
     // API call to fetch monsters based on the query
     fun searchMonsters(query: String) {
         viewModelScope.launch {
-            Log.d(TAG, "searchMonsters() called with query: '$query'")
-            Log.d(TAG, "Selected CR: ${selectedCR.value}, Selected Type: ${selectedType.value}")
-
-            isLoading.value = true
             try {
-                val response = Open5eApi.service.getMonsters(query)
-                Log.d(TAG, "API returned ${response.results.size} results")
+                isLoading.value = true
+                val allMonsters = fetchAllMonsters(query)
+                Log.d("MonsterManagerVM", "API returned ${allMonsters.size} total monsters")
 
-                val filtered = response.results.filter { monster ->
+                val filtered = allMonsters.map {
+                    Log.d("MonsterManagerVM", "Monster: ${it.name}")
+                    it
+                }.filter { monster ->
                     val crMatch =
                         selectedCR.value == null || monster.challenge_rating == selectedCR.value
-
                     val typeMatch = selectedType.value == null || monster.type.equals(
                         selectedType.value,
                         ignoreCase = true
                     )
-                    val legendaryMatch = selectedLegendary.value == null || monster.legendary == selectedLegendary.value
-
 
                     Log.d(
-                        TAG,
+                        "MonsterManagerVM",
                         "Monster: ${monster.name}, CR Match: $crMatch, Type Match: $typeMatch"
                     )
-
-                    crMatch && typeMatch && legendaryMatch
+                    crMatch && typeMatch
                 }
 
-                Log.d(TAG, "Filtered result count: ${filtered.size}")
                 _monsters.value = filtered
-
+                Log.d("MonsterManagerVM", "Filtered result count: ${filtered.size}")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to fetch monsters: ${e.message}", e)
+                Log.e("MonsterManagerVM", "Failed to fetch monsters: ${e.message}", e)
                 _monsters.value = emptyList()
             } finally {
                 isLoading.value = false
-                Log.d(TAG, "isLoading set to false")
+                Log.d("MonsterManagerVM", "isLoading set to false")
             }
         }
     }
