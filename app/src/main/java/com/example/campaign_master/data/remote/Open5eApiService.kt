@@ -9,6 +9,15 @@ interface Open5eApiService {
     @GET("monsters/")
     suspend fun getMonsters(@Query("search") name: String? = null): Open5eResponse
 
+    @GET("monsters/")
+    suspend fun searchMonsters(
+        @Query("search") search: String? = null,
+        @Query("challenge_rating") cr: String? = null,
+        @Query("type") type: String? = null,
+        @Query("limit") limit: Int = 100,
+        @Query("offset") offset: Int = 0
+    ): Open5eResponse
+
     @GET
     suspend fun getMonstersByUrl(@Url url: String): Open5eResponse
 }

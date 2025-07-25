@@ -39,6 +39,7 @@ fun MonsterManagerScreen(
     viewModel: MonsterManagerViewModel = viewModel(),
 ) {
     val monsters by viewModel.monsters
+    val savedMonsters by viewModel.savedMonsters
     val isLoading by viewModel.isLoading
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current

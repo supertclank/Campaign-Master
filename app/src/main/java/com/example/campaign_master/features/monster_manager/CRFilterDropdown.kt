@@ -25,8 +25,13 @@ fun CRFilterDropdown(
     var expanded by remember { mutableStateOf(false) }
     val crOptions = listOf(null) + (0..30).map { it.toString() }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.padding(top = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
         Text("Filter by CR")
+
         Button(
             onClick = { expanded = true },
             modifier = Modifier

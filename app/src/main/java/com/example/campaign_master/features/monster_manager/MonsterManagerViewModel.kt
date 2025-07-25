@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class MonsterManagerViewModel : ViewModel() {
 
     private val TAG = "MonsterManagerVM"
+    private val api = Open5eApi.service
 
     // State holder for the monster list
     private val _monsters = mutableStateOf<List<Monster>>(emptyList())
@@ -31,7 +32,6 @@ class MonsterManagerViewModel : ViewModel() {
     var selectedCR = mutableStateOf<String?>(null)
     var selectedType = mutableStateOf<String?>(null)
 
-    var selectedLegendary = mutableStateOf<Boolean?>(null)
 
     // Flag to check if the initial monsters have been loaded
     var hasLoadedInitialMonsters by mutableStateOf(false)
@@ -45,7 +45,6 @@ class MonsterManagerViewModel : ViewModel() {
         nextUrl = currentPage.next
 
         while (nextUrl != null) {
-            // Remove base URL to extract just the path/query
             val relativePath = nextUrl.removePrefix("https://api.open5e.com/")
             currentPage = Open5eApi.service.getMonstersByUrl(relativePath)
             allMonsters += currentPage.results
@@ -57,39 +56,30 @@ class MonsterManagerViewModel : ViewModel() {
 
 
     // API call to fetch monsters based on the query
-    fun searchMonsters(query: String) {
+    fun searchMonsters(query: String? = null) {
         viewModelScope.launch {
+            isLoading.value = true
+
             try {
-                isLoading.value = true
-                val allMonsters = fetchAllMonsters(query)
-                Log.d("MonsterManagerVM", "API returned ${allMonsters.size} total monsters")
+                val cr = selectedCR.value
+                val type = selectedType.value
 
-                val filtered = allMonsters.map {
-                    Log.d("MonsterManagerVM", "Monster: ${it.name}")
-                    it
-                }.filter { monster ->
-                    val crMatch =
-                        selectedCR.value == null || monster.challenge_rating == selectedCR.value
-                    val typeMatch = selectedType.value == null || monster.type.equals(
-                        selectedType.value,
-                        ignoreCase = true
-                    )
+                val response = api.searchMonsters(
+                    search = query?.takeIf { it.isNotBlank() },
+                    cr = cr,
+                    type = type,
+                    limit = 500,
+                    offset = 0
+                )
 
-                    Log.d(
-                        "MonsterManagerVM",
-                        "Monster: ${monster.name}, CR Match: $crMatch, Type Match: $typeMatch"
-                    )
-                    crMatch && typeMatch
-                }
+                Log.d("MonsterManagerVM", "API returned ${response.results.size} monsters")
+                _monsters.value = response.results
 
-                _monsters.value = filtered
-                Log.d("MonsterManagerVM", "Filtered result count: ${filtered.size}")
             } catch (e: Exception) {
                 Log.e("MonsterManagerVM", "Failed to fetch monsters: ${e.message}", e)
                 _monsters.value = emptyList()
             } finally {
                 isLoading.value = false
-                Log.d("MonsterManagerVM", "isLoading set to false")
             }
         }
     }

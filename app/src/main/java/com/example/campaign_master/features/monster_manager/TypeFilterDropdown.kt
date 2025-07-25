@@ -50,6 +50,7 @@ fun TypeFilterDropdown(
         Button(
             onClick = { expanded = true },
             modifier = Modifier
+                .padding(top = 4.dp)
                 .width(180.dp),
             shape = RoundedCornerShape(50)
         ) {
