@@ -1,20 +1,12 @@
 package com.example.campaign_master.features.monster_manager
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,130 +35,206 @@ fun MonsterDetailScreen(
         Spacer(Modifier.height(16.dp))
 
         Card(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(6.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    monster.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Text(monster.name, style = MaterialTheme.typography.titleLarge)
 
                 Spacer(Modifier.height(8.dp))
-                Text("CR: ${monster.challenge_rating}", modifier = Modifier.fillMaxWidth())
-                Text("Type: ${monster.type}", modifier = Modifier.fillMaxWidth())
-                Text("HP: ${monster.hit_points}", modifier = Modifier.fillMaxWidth())
-                Text("AC: ${monster.armor_class}", modifier = Modifier.fillMaxWidth())
+                Text("CR: ${monster.challenge_rating}")
+                Text("Type: ${monster.type}")
+                Text("HP: ${monster.hit_points} (${monster.hit_dice ?: "-"})")
+                Text("AC: ${monster.armor_class}${monster.armor_desc?.let { " ($it)" } ?: ""}")
 
                 val speed = monster.speed
-                if (speed.walk != null || speed.fly != null || speed.swim != null || speed.burrow != null || speed.climb != null) {
+                if (speed.walk != null || speed.fly != null || speed.swim != null ||
+                    speed.burrow != null || speed.climb != null
+                ) {
                     Spacer(Modifier.height(8.dp))
-                    Text(
-                        "Speed:",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    speed.walk?.let {
-                        Text(
-                            "• Walk: ${it} ft.",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                    speed.fly?.let { Text("• Fly: ${it} ft.", modifier = Modifier.fillMaxWidth()) }
-                    speed.swim?.let {
-                        Text(
-                            "• Swim: ${it} ft.",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                    speed.burrow?.let {
-                        Text(
-                            "• Burrow: ${it} ft.",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                    speed.climb?.let {
-                        Text(
-                            "• Climb: ${it} ft.",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+                    Text("Speed:", style = MaterialTheme.typography.titleMedium)
+                    speed.walk?.let { Text("• Walk: $it ft.") }
+                    speed.fly?.let { Text("• Fly: $it ft.") }
+                    speed.swim?.let { Text("• Swim: $it ft.") }
+                    speed.burrow?.let { Text("• Burrow: $it ft.") }
+                    speed.climb?.let { Text("• Climb: $it ft.") }
                 }
 
                 Spacer(Modifier.height(8.dp))
-                Text("Size: ${monster.size}", modifier = Modifier.fillMaxWidth())
-                Text("Alignment: ${monster.alignment}", modifier = Modifier.fillMaxWidth())
-
+                Text("Size: ${monster.size}")
+                Text("Alignment: ${monster.alignment}")
             }
         }
 
         Spacer(Modifier.height(24.dp))
 
-        //Card for Monster Actions
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(6.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Actions",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Text("Ability Scores", style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    AbilityScore("STR", monster.strength)
+                    AbilityScore("DEX", monster.dexterity)
+                    AbilityScore("CON", monster.constitution)
+                    AbilityScore("INT", monster.intelligence)
+                    AbilityScore("WIS", monster.wisdom)
+                    AbilityScore("CHA", monster.charisma)
+                }
 
                 Spacer(Modifier.height(12.dp))
 
-                monster.actions?.forEach { action ->
-                    Spacer(Modifier.height(14.dp))
-                    Text(
-                        "• ${action.name}",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        action.desc,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp)
-                    )
+                val saves = listOfNotNull(
+                    monster.strength_save?.let { "Str +$it" },
+                    monster.dexterity_save?.let { "Dex +$it" },
+                    monster.constitution_save?.let { "Con +$it" },
+                    monster.intelligence_save?.let { "Int +$it" },
+                    monster.wisdom_save?.let { "Wis +$it" },
+                    monster.charisma_save?.let { "Cha +$it" }
+                )
+                if (saves.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    Text("Saving Throws", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(saves.joinToString())
+                }
+
+                monster.skills?.takeIf { it.isNotEmpty() }?.let {
+                    Spacer(Modifier.height(12.dp))
+                    Text("Skills", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    val skills = it.entries.joinToString { entry -> "${entry.key} ${entry.value}" }
+                    Text(skills)
+                }
+
+                listOf(
+                    "Damage Immunities" to monster.damage_immunities,
+                    "Damage Resistances" to monster.damage_resistances,
+                    "Damage Vulnerabilities" to monster.damage_vulnerabilities,
+                    "Condition Immunities" to monster.condition_immunities
+                ).forEach { (title, value) ->
+                    value?.takeIf { it.isNotBlank() }?.let {
+                        Spacer(Modifier.height(12.dp))
+                        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(it)
+                    }
+                }
+
+                monster.senses?.takeIf { it.isNotBlank() }?.let {
+                    Spacer(Modifier.height(12.dp))
+                    Text("Senses", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(it)
+                }
+                monster.languages?.takeIf { it.isNotBlank() }?.let {
+                    Spacer(Modifier.height(8.dp))
+                    Text("Languages", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(it)
                 }
             }
         }
 
-        //Card for Monster Legendary Actions (if available)
-        if (!monster.legendary_actions.isNullOrEmpty()) {
-            Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(24.dp))
 
+        monster.special_abilities?.takeIf { it.isNotEmpty() }?.let {
             Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Special Abilities", style = MaterialTheme.typography.titleLarge)
+                    it.forEach { ability ->
+                        Spacer(Modifier.height(12.dp))
+                        Text("• ${ability.name}", fontWeight = FontWeight.Bold)
+                        Text(ability.desc, modifier = Modifier.padding(top = 2.dp))
+                    }
+                }
+            }
+            Spacer(Modifier.height(24.dp))
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(6.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Actions", style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.height(12.dp))
+                monster.actions?.forEach { action ->
+                    Spacer(Modifier.height(14.dp))
+                    Text("• ${action.name}", fontWeight = FontWeight.Bold)
+                    Text(action.desc, modifier = Modifier.padding(top = 2.dp))
+                }
+            }
+        }
+
+        monster.reactions?.takeIf { it.isNotEmpty() }?.let {
+            Spacer(Modifier.height(24.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Reactions", style = MaterialTheme.typography.titleLarge)
+                    it.forEach { reaction ->
+                        Spacer(Modifier.height(12.dp))
+                        Text("• ${reaction.name}", fontWeight = FontWeight.Bold)
+                        Text(reaction.desc, modifier = Modifier.padding(top = 2.dp))
+                    }
+                }
+            }
+        }
+
+        monster.legendary_actions?.takeIf { it.isNotEmpty() }?.let {
+            Spacer(Modifier.height(24.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(6.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Legendary Actions", style = MaterialTheme.typography.titleLarge)
-
-                    monster.legendary_actions.forEach { action ->
+                    it.forEach { action ->
                         Spacer(Modifier.height(12.dp))
-                        Text(
-                            "• ${action.name}",
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Text(
-                            action.desc,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 2.dp)
-                        )
+                        Text("• ${action.name}", fontWeight = FontWeight.Bold)
+                        Text(action.desc, modifier = Modifier.padding(top = 2.dp))
                     }
                 }
             }
         }
+
+        monster.spell_list?.takeIf { it.isNotEmpty() }?.let {
+            Spacer(Modifier.height(24.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(6.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Spells", style = MaterialTheme.typography.titleLarge)
+                    it.forEach { spell ->
+                        Spacer(Modifier.height(4.dp))
+                        Text("• $spell")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AbilityScore(label: String, score: Int?) {
+    val mod = score?.let { (it - 10) / 2 }
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(label, fontWeight = FontWeight.Bold)
+        Text("${score ?: "-"} (${if (mod != null && mod >= 0) "+$mod" else mod ?: "-"})")
     }
 }

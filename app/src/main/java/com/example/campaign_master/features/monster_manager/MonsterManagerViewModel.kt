@@ -54,29 +54,35 @@ class MonsterManagerViewModel : ViewModel() {
         return allMonsters
     }
 
-
     // API call to fetch monsters based on the query
     fun searchMonsters(query: String? = null) {
         viewModelScope.launch {
             isLoading.value = true
-
             try {
-                val cr = selectedCR.value
-                val type = selectedType.value
-
+                //Fetch big list first
                 val response = api.searchMonsters(
                     search = query?.takeIf { it.isNotBlank() },
-                    cr = cr,
-                    type = type,
-                    limit = 500,
+                    limit = 3000,
                     offset = 0
                 )
 
-                Log.d("MonsterManagerVM", "API returned ${response.results.size} monsters")
-                _monsters.value = response.results
+                //Local filtering (for CR and Type)
+                val crFilter = selectedCR.value
+                val typeFilter = selectedType.value
+
+                val filtered = response.results.filter { monster ->
+                    val crMatch = crFilter?.let { monster.challenge_rating.trim() == it.trim() } ?: true
+                    val typeMatch = typeFilter?.let {
+                        monster.type.equals(it, ignoreCase = true)
+                    } ?: true
+                    crMatch && typeMatch
+                }
+
+                _monsters.value = filtered
+                Log.d(TAG, "Loaded ${filtered.size} monsters after filtering")
 
             } catch (e: Exception) {
-                Log.e("MonsterManagerVM", "Failed to fetch monsters: ${e.message}", e)
+                Log.e(TAG, "Failed to fetch monsters: ${e.message}", e)
                 _monsters.value = emptyList()
             } finally {
                 isLoading.value = false
