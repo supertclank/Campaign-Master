@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.campaign_master.data.MonsterRepository
-import com.example.campaign_master.data.remote.models.Monster
+import com.example.campaign_master.data.remote.models.monster.Monster
+import com.example.campaign_master.data.remote.models.monster.MonsterRepository
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

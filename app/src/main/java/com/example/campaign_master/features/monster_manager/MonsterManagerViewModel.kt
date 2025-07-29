@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.campaign_master.data.MonsterRepository
 import com.example.campaign_master.data.remote.Open5eApi
-import com.example.campaign_master.data.remote.models.Monster
+import com.example.campaign_master.data.remote.models.monster.Monster
+import com.example.campaign_master.data.remote.models.monster.MonsterRepository
 import kotlinx.coroutines.launch
 
 class MonsterManagerViewModel : ViewModel() {
@@ -54,36 +54,46 @@ class MonsterManagerViewModel : ViewModel() {
         return allMonsters
     }
 
+    private val _uiMessage = mutableStateOf<String?>(null)
+    val uiMessage: State<String?> = _uiMessage
+
+    fun clearUiMessage() {
+        _uiMessage.value = null
+    }
+
+
     // API call to fetch monsters based on the query
     fun searchMonsters(query: String? = null) {
         viewModelScope.launch {
             isLoading.value = true
             try {
-                //Fetch big list first
                 val response = api.searchMonsters(
                     search = query?.takeIf { it.isNotBlank() },
                     limit = 3000,
                     offset = 0
                 )
 
-                //Local filtering (for CR and Type)
                 val crFilter = selectedCR.value
                 val typeFilter = selectedType.value
 
                 val filtered = response.results.filter { monster ->
-                    val crMatch = crFilter?.let { monster.challenge_rating.trim() == it.trim() } ?: true
-                    val typeMatch = typeFilter?.let {
-                        monster.type.equals(it, ignoreCase = true)
-                    } ?: true
+                    val crMatch =
+                        crFilter?.let { monster.challenge_rating.trim() == it.trim() } ?: true
+                    val typeMatch =
+                        typeFilter?.let { monster.type.equals(it, ignoreCase = true) } ?: true
                     crMatch && typeMatch
                 }
 
                 _monsters.value = filtered
-                Log.d(TAG, "Loaded ${filtered.size} monsters after filtering")
+
+                if (filtered.isEmpty()) {
+                    _uiMessage.value = "No monsters found for the selected filters."
+                }
 
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to fetch monsters: ${e.message}", e)
                 _monsters.value = emptyList()
+                _uiMessage.value = "Failed to fetch monsters: ${e.message}"
             } finally {
                 isLoading.value = false
             }

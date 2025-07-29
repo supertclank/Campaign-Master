@@ -1,4 +1,4 @@
-package com.example.campaign_master.data.remote.models
+package com.example.campaign_master.data.remote.models.monster
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -53,6 +53,6 @@ data class Monster(
     val special_abilities: List<MonsterAction>? = emptyList(),
     val reactions: List<MonsterAction>? = emptyList(),
 
-    // Spellcasting (Optional)
+    // Spellcasting
     val spell_list: List<String>? = null
 ) : Parcelable

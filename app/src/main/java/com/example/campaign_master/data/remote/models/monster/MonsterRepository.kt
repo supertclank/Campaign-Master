@@ -1,6 +1,5 @@
-package com.example.campaign_master.data
+package com.example.campaign_master.data.remote.models.monster
 
-import com.example.campaign_master.data.remote.models.Monster
 import com.google.firebase.firestore.FirebaseFirestore
 
 object MonsterRepository {

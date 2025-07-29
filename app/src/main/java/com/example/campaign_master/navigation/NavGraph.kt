@@ -6,10 +6,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.campaign_master.data.remote.models.Monster
+import com.example.campaign_master.data.remote.models.monster.Monster
 import com.example.campaign_master.features.encounter_builder.EncounterBuilderScreen
 import com.example.campaign_master.features.home.HomeScreen
-import com.example.campaign_master.features.loot_manager.LootManagerScreen
+import com.example.campaign_master.features.loot.LootManagerScreen
 import com.example.campaign_master.features.monster_manager.MonsterDetailScreen
 import com.example.campaign_master.features.monster_manager.MonsterManagerScreen
 import com.example.campaign_master.features.notes.NotesJournalScreen
@@ -33,7 +33,7 @@ fun NavGraph(navController: NavHostController) {
             EncounterBuilderScreen()
         }
         composable(Screen.MonsterManager.route) {
-            MonsterManagerScreen(navController = navController) // If you want navigation from list
+            MonsterManagerScreen(navController = navController)
         }
         composable(Screen.NotesJournal.route) {
             NotesJournalScreen()

@@ -39,10 +39,18 @@ fun MonsterManagerScreen(
     viewModel: MonsterManagerViewModel = viewModel(),
 ) {
     val monsters by viewModel.monsters
-    val savedMonsters by viewModel.savedMonsters
     val isLoading by viewModel.isLoading
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val uiMessage by viewModel.uiMessage
+
+    // Show UI messages (like "No monsters found") as Toasts
+    LaunchedEffect(uiMessage) {
+        uiMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            viewModel.clearUiMessage()
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!viewModel.hasLoadedInitialMonsters) {
